@@ -1,5 +1,6 @@
 import { extend } from "./shared";
-
+let activeEffect;
+let shouldTrick;
 class ReactiveEffect {
   private _fn: any;
   private deps = [];
@@ -9,8 +10,15 @@ class ReactiveEffect {
     this._fn = fn;
   }
   run() {
+    if (!this.active) {
+      return this._fn()
+    }
+    shouldTrick=true;
+    // 收集依赖
     activeEffect = this;
-    return this._fn();
+    const result = this._fn();
+    shouldTrick = false;
+    return result
   }
   stop() {
     if (this.active) {
@@ -28,6 +36,8 @@ function clearUpEffect(effect) {
 // 依赖收集
 const targetMap = new Map();
 export function track(target, key) {
+   if (!activeEffect) return;
+   if (!shouldTrick) return;
   let depsMap = targetMap.get(target);
   if (!depsMap) {
     depsMap = new Map();
@@ -38,11 +48,11 @@ export function track(target, key) {
     dep = new Set();
     depsMap.set(key, dep);
   }
-  if (!activeEffect) return;
+ 
   dep.add(activeEffect);
   activeEffect.deps.push(dep);
 }
-let activeEffect;
+
 export function effect(fn, options: any = {}) {
   // 上来就要调用fn
   const scheduler = options.scheduler;  //获取
