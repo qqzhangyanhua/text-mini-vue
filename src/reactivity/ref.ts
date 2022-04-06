@@ -1,0 +1,39 @@
+import { isTracking, trackEffect, triggerEffect } from "./effect";
+import { reactive } from "./reactive";
+import { hasChange, isObject } from "./shared";
+
+class RefImpl {
+  private _value: any;
+  public dep;
+  private _rawValue: any;
+  constructor(value) {
+    this._rawValue = value;
+    this._value = convert(value);
+    //   判断对象是不是对象
+    this.dep = new Set();
+  }
+  set value(newValue: any) {
+    //   对比的时候
+    if (hasChange(newValue, this._rawValue)) {
+      this._value = convert(newValue);
+      this._rawValue = newValue;
+      triggerEffect(this.dep);
+    }
+  }
+  get value() {
+    if (isTracking()) {
+      trackEffect(this.dep);
+    }
+
+    return this._value;
+  }
+}
+function convert(value: any) {
+  return isObject(value) ? reactive(value) : value;
+}
+export function ref(value) {
+  return new RefImpl(value);
+}
+export function isRef() {}
+export function unRef() {}
+export function proxyRefs() {}

@@ -30,3 +30,7 @@ export function shallowReadonly(raw) {
   }
   return new Proxy(raw, shallowReadonlyHandlers);
 }
+
+export function isProxy(raw: any): boolean {
+  return isReadOnly(raw) || isReactive(raw);
+}
