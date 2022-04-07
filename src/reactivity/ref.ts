@@ -40,6 +40,19 @@ export function isRef(ref) {
   return !!ref._v_isRef;
 }
 export function unRef(ref) {
-   return isRef(ref) ? ref.value : ref;
+  return isRef(ref) ? ref.value : ref;
 }
-export function proxyRefs() {}
+export function proxyRefs(raw: any) {
+  return new Proxy(raw, {
+    get(target, key) {
+      return unRef(Reflect.get(target, key));
+    },
+    set(target, key, value) {
+      if (isRef(target[key]) && !isRef(value)) {
+        return (target[key].value = value);
+      } else {
+        return Reflect.set(target, key, value);
+      }
+    },
+  });
+}
