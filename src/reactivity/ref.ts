@@ -5,6 +5,7 @@ import { hasChange, isObject } from "./shared";
 class RefImpl {
   private _value: any;
   public dep;
+  public _v_isRef: boolean = true;
   private _rawValue: any;
   constructor(value) {
     this._rawValue = value;
@@ -34,6 +35,11 @@ function convert(value: any) {
 export function ref(value) {
   return new RefImpl(value);
 }
-export function isRef() {}
-export function unRef() {}
+export function isRef(ref) {
+  // 如果有值就一定是ref
+  return !!ref._v_isRef;
+}
+export function unRef(ref) {
+   return isRef(ref) ? ref.value : ref;
+}
 export function proxyRefs() {}
