@@ -2,15 +2,18 @@
   "name": "before-minivue",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/guide-cjs.js",
+  "module":"lib/guide-esm.js",
   "scripts": {
     "dev": "node src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "build": "rollup -c"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@rollup/plugin-typescript": "^8.3.1",
     "@vue/reactivity": "^3.2.31"
   },
   "devDependencies": {
@@ -20,6 +23,8 @@
     "@types/jest": "^27.4.1",
     "babel-jest": "^27.5.1",
     "jest": "^27.5.1",
+    "rollup": "^2.70.1",
+    "tslib": "^2.3.1",
     "typescript": "^4.6.2"
   }
 }
