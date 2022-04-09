@@ -7,17 +7,18 @@ export const APP = {
                 id: 'app111',
                 class: 'name'
             },
-            // 'hello world' + this.name
-            [h('p', {
-                id: "red"
-            }, '子组件1'), h('p', {
-                id: "blue"
-            }, '子组件2')]
+            'hello world' + this.name
+            // [h('p', {
+            //     id: "red",
+            //     class:['mo','text']
+            // }, '子组件1'), h('p', {
+            //     id: "blue"
+            // }, '子组件2')]
         );
     },
     setup() {
         return {
-            name: 'world'
+            name: 'world12345666'
         }
     }
 }

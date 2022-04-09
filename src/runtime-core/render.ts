@@ -26,7 +26,9 @@ function mountComponent(vnode: any, container: any) {
 }
 
 function setupRenderEffect(instance: any, container: any) {
-  const subTree = instance.render();
+  const { proxy } = instance
+  const subTree = instance.render.call(proxy);
+  console.log("subTree====", proxy);
   patch(subTree, container);
 }
 function processElement(vnode: any, container: any) {

@@ -1,7 +1,8 @@
 export function createComponentInstance(vnode) {
   const component = {
-      vnode: vnode,
-      type: vnode.type,
+    vnode: vnode,
+    type: vnode.type,
+    setupState: {},
   };
   return component;
 }
@@ -12,23 +13,32 @@ export function setComponentInstance(instance) {
 }
 function setupStatefulComponent(instance) {
   const Component = instance.type;
+  instance.proxy = new Proxy(
+    {},
+    {
+      get(target, key) {
+        if (key in instance.setupState) {
+          return instance.setupState[key];
+        }
+      },
+    }
+  );
   const { setup } = Component;
   if (setup) {
     const setupResult = setup();
-    handelSrtupResult(setupResult, instance);
+    handelSetupResult(setupResult, instance);
   }
 }
 
-function handelSrtupResult(setupResult: any, instance: any) {
+function handelSetupResult(setupResult: any, instance: any) {
   if (typeof setupResult === "object") {
     instance.setupState = setupResult;
-    }
-    finishComponentSetup(instance);
+  }
+  finishComponentSetup(instance);
 }
 function finishComponentSetup(instance: any) {
-    const Component = instance.type
-    if (Component.render) {
-        instance.render = Component.render
-    }
+  const Component = instance.type;
+  if (Component.render) {
+    instance.render = Component.render;
+  }
 }
-

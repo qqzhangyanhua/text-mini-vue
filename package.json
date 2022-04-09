@@ -5,7 +5,7 @@
   "main": "lib/guide-cjs.js",
   "module":"lib/guide-esm.js",
   "scripts": {
-    "dev": "node src/index.js",
+    "dev": "node src/index.js --watch",
     "test": "jest",
     "build": "rollup -c"
   },
