@@ -1,6 +1,6 @@
 import {
     createApp
-} from '../../lib/guid.esm.js'
+} from '../../lib/guide.esm.js'
 import {
     APP
 } from './APP.js'

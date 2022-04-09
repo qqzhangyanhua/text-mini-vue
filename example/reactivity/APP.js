@@ -1,10 +1,19 @@
-
 import {
     h
-} from '../../lib/guid.esm.js'
+} from '../../lib/guide.esm.js'
 export const APP = {
     render() {
-        return h('div','hello world'+this.name);
+        return h('div', {
+                id: 'app111',
+                class: 'name'
+            },
+            // 'hello world' + this.name
+            [h('p', {
+                id: "red"
+            }, '子组件1'), h('p', {
+                id: "blue"
+            }, '子组件2')]
+        );
     },
     setup() {
         return {
