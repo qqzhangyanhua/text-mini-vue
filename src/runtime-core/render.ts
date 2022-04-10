@@ -19,28 +19,28 @@ function patch(vnode, container) {
 function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container);
 }
-function mountComponent(vnode: any, container: any) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initialVNode: any, container: any) {
+  const instance = createComponentInstance(initialVNode);
   setComponentInstance(instance);
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, container, initialVNode);
 }
 
-function setupRenderEffect(instance: any, container: any) {
-  const { proxy } = instance
+function setupRenderEffect(instance: any, container: any,initialVNode: any) {
+  const { proxy } = instance;
   const subTree = instance.render.call(proxy);
-  console.log("subTree====", proxy);
   patch(subTree, container);
+   initialVNode.el = subTree.el;
 }
 function processElement(vnode: any, container: any) {
   mountElement(vnode, container);
 }
 function mountElement(vnode: any, container: any) {
-  const el = document.createElement(vnode.type);
+  const el = (vnode.el = document.createElement(vnode.type));
   const { children, props } = vnode;
   if (typeof children === "string") {
     el.textContent = children;
-  } else if (Array.isArray(children)) { 
-   mountChild(children, el);
+  } else if (Array.isArray(children)) {
+    mountChild(children, el);
   }
   for (const key in props) {
     const value = props[key];
@@ -50,8 +50,8 @@ function mountElement(vnode: any, container: any) {
   container.appendChild(el);
 }
 function mountChild(vnode: any, container: any) {
-  console.log('mountChild',vnode)
-   vnode.forEach((el) => {
-     patch(el, container);
-   });
+  console.log("mountChild", vnode);
+  vnode.forEach((el) => {
+    patch(el, container);
+  });
 }

@@ -3,6 +3,7 @@ import {
 } from '../../lib/guide.esm.js'
 export const APP = {
     render() {
+        window.self=this;
         return h('div', {
                 id: 'app111',
                 class: 'name'
