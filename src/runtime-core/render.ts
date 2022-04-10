@@ -51,8 +51,9 @@ function mountElement(vnode: any, container: any) {
     if (isOn(key)) {
       const event = key.slice(2).toLowerCase();
       el.addEventListener(event, value);
+    } else {
+      el.setAttribute(key, value);
     }
-    el.setAttribute(key, value);
   }
 
   container.appendChild(el);

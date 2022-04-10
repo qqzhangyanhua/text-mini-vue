@@ -3,7 +3,7 @@ import {
   readonlyHandlers,
   shallowReadonlyHandlers,
 } from "./bseHandlers";
-import { isObject } from "./shared";
+import { isObject } from "./shared/index";
 export const enum ReactiveFlags {
   IS_REACTIVE = "__v_isReactive__",
   IS_READ_ONLY = "__v_isReadonly__",
