@@ -3,10 +3,13 @@ import {
 } from '../../lib/guide.esm.js'
 export const APP = {
     render() {
-        window.self=this;
+        window.self = this;
         return h('div', {
                 id: 'app111',
-                class: 'name'
+                class: 'name',
+                onClick: () => {
+                    console.log('onclick');
+                }
             },
             'hello world' + this.name
             // [h('p', {

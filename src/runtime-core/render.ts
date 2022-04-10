@@ -39,13 +39,19 @@ function processElement(vnode: any, container: any) {
 function mountElement(vnode: any, container: any) {
   const el = (vnode.el = document.createElement(vnode.type));
   const { children, props, shapeFlags } = vnode;
-  if (shapeFlags& ShapeFlags.TEXT_CHILDREN) {
+  if (shapeFlags & ShapeFlags.TEXT_CHILDREN) {
     el.textContent = children;
-  } else if (shapeFlags& ShapeFlags.ARROW_CHILDREN) {
+  } else if (shapeFlags & ShapeFlags.ARROW_CHILDREN) {
     mountChild(children, el);
   }
+
   for (const key in props) {
     const value = props[key];
+    const isOn = (key) => /^on[A-Z]/.test(key);
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase();
+      el.addEventListener(event, value);
+    }
     el.setAttribute(key, value);
   }
 
