@@ -9,12 +9,25 @@ export function render(vnode, container) {
 function patch(vnode, container) {
   // 处理组件
   // 先判断是不是element
+  // fragment只渲染children
   const { type, shapeFlags } = vnode;
-  if (shapeFlags & ShapeFlags.ELEMENT) {
-    processElement(vnode, container);
-  } else if (shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {
-    processComponent(vnode, container);
+
+  switch (type) {
+    case "Fragment":
+      processFragment(vnode, container);
+      break;
+    case "Text":
+      processText(vnode, container);
+      break;
+    default:
+      if (shapeFlags & ShapeFlags.ELEMENT) {
+        processElement(vnode, container);
+      } else if (shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {
+        processComponent(vnode, container);
+      }
+      break;
   }
+
   console.log("vnode===", vnode.type);
 }
 
@@ -60,7 +73,18 @@ function mountElement(vnode: any, container: any) {
 }
 function mountChild(vnode: any, container: any) {
   console.log("mountChild", vnode);
-  vnode.forEach((el) => {
-    patch(el, container);
-  });
+  if (Array.isArray(vnode)) {
+    vnode.forEach((el) => {
+      patch(el, container);
+    });
+  }
+}
+function processFragment(vnode: any, container: any) {
+  mountChild(vnode, container);
+}
+function processText(vnode: any, container: any) {
+  //  只渲染文字
+  const { children } = vnode;
+  const textNode = (vnode.el = document.createTextNode(children));
+  container.append(textNode);
 }

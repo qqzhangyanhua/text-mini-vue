@@ -1,5 +1,6 @@
 import { ShapeFlags } from "../shared/sharedFlags";
 
+export const Text = Symbol("Text");
 export function createVnode(type, props?, children?) {
   const vnode = {
     type,
@@ -10,19 +11,21 @@ export function createVnode(type, props?, children?) {
   };
   // children 位运算符
   if (typeof children === "string") {
-    vnode.shapeFlags|= ShapeFlags.TEXT_CHILDREN;
+    vnode.shapeFlags |= ShapeFlags.TEXT_CHILDREN;
   } else if (Array.isArray(children)) {
-      vnode.shapeFlags|= ShapeFlags.ARROW_CHILDREN;
+    vnode.shapeFlags |= ShapeFlags.ARROW_CHILDREN;
   }
   // 组件 slot
   if (vnode.shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {
     if (typeof children === "object") {
-      vnode.shapeFlags|= ShapeFlags.SLOT_CHILDREN;
+      vnode.shapeFlags |= ShapeFlags.SLOT_CHILDREN;
     }
   }
   return vnode;
 }
-
+export function createTextVnode(text: string) {
+   return createVnode('Text', {}, text);
+}
 function getShapeFlags(type: any) {
   return typeof type === "string"
     ? ShapeFlags.ELEMENT

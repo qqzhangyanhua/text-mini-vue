@@ -1,5 +1,6 @@
 import {
-    h
+    h,
+    createTextVnode
 } from '../../lib/guide.esm.js'
 import {
     Foo
@@ -7,14 +8,18 @@ import {
 export const APP = {
     render() {
         window.self = this;
-        const app = h('div', { id: 'app' }, 'app')
+        const app = h('div', {
+            id: 'app'
+        }, 'app')
         const foo = h(Foo, {}, {
-            footer: () => h('p', {}, 'slots111'),
-           header: ({age}) => h('p', {}, 'slots222' + age)
+            footer: () => [h('p', {}, 'slots111'), createTextVnode('你好呀text节点')],
+            header: ({
+                age
+            }) => h('p', {}, 'slots222' + age)
         })
-        // const foo = h(Foo, {}, h('p', {}, 'slots111'))
+        // const foo = h(Foo, {}, h('p', {}, 'slots111')) 
 
-        return h('div', {},[app,foo])
+        return h('div', {}, [app, foo])
     },
     setup() {
         return {
