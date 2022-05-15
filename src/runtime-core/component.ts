@@ -4,12 +4,15 @@ import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { initSlots } from "./componentSlots";
 
-export function createComponentInstance(vnode) {
+export function createComponentInstance(vnode, parent) {
+  console.log("调试====", parent);
   const component = {
     vnode: vnode,
     type: vnode.type,
     setupState: {},
     props: {},
+    provides:parent?parent.provides: {},
+    parent,
     slot: {},
     emit: () => {},
   };

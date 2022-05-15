@@ -3,10 +3,10 @@ import { ShapeFlags } from "../shared/sharedFlags";
 import { createComponentInstance, setComponentInstance } from "./component";
 
 export function render(vnode, container) {
-  patch(vnode, container);
+  patch(vnode, container, null);
   console.log("render==", vnode, container);
 }
-function patch(vnode, container) {
+function patch(vnode, container, parentComponent) {
   // 处理组件
   // 先判断是不是element
   // fragment只渲染children
@@ -14,16 +14,16 @@ function patch(vnode, container) {
 
   switch (type) {
     case "Fragment":
-      processFragment(vnode, container);
+      processFragment(vnode, container, parentComponent);
       break;
     case "Text":
       processText(vnode, container);
       break;
     default:
       if (shapeFlags & ShapeFlags.ELEMENT) {
-        processElement(vnode, container);
+        processElement(vnode, container, parentComponent);
       } else if (shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {
-        processComponent(vnode, container);
+        processComponent(vnode, container, parentComponent);
       }
       break;
   }
@@ -31,11 +31,15 @@ function patch(vnode, container) {
   console.log("vnode===", vnode.type);
 }
 
-function processComponent(vnode: any, container: any) {
-  mountComponent(vnode, container);
+function processComponent(vnode: any, container: any, parentComponent) {
+  mountComponent(vnode, container, parentComponent);
 }
-function mountComponent(initialVNode: any, container: any) {
-  const instance = createComponentInstance(initialVNode);
+function mountComponent(
+  initialVNode: any,
+  container: any,
+  parentComponent: any
+) {
+  const instance = createComponentInstance(initialVNode, parentComponent);
   setComponentInstance(instance);
   setupRenderEffect(instance, container, initialVNode);
 }
@@ -43,19 +47,19 @@ function mountComponent(initialVNode: any, container: any) {
 function setupRenderEffect(instance: any, container: any, initialVNode: any) {
   const { proxy } = instance;
   const subTree = instance.render.call(proxy);
-  patch(subTree, container);
+  patch(subTree, container, instance);
   initialVNode.el = subTree.el;
 }
-function processElement(vnode: any, container: any) {
-  mountElement(vnode, container);
+function processElement(vnode: any, container: any, parentComponent) {
+  mountElement(vnode, container, parentComponent);
 }
-function mountElement(vnode: any, container: any) {
+function mountElement(vnode: any, container: any, parentComponent) {
   const el = (vnode.el = document.createElement(vnode.type));
   const { children, props, shapeFlags } = vnode;
   if (shapeFlags & ShapeFlags.TEXT_CHILDREN) {
     el.textContent = children;
   } else if (shapeFlags & ShapeFlags.ARROW_CHILDREN) {
-    mountChild(children, el);
+    mountChild(children, el, parentComponent);
   }
 
   for (const key in props) {
@@ -71,16 +75,16 @@ function mountElement(vnode: any, container: any) {
 
   container.appendChild(el);
 }
-function mountChild(vnode: any, container: any) {
+function mountChild(vnode: any, container: any, parentComponent) {
   console.log("mountChild", vnode);
   if (Array.isArray(vnode)) {
     vnode.forEach((el) => {
-      patch(el, container);
+      patch(el, container, parentComponent);
     });
   }
 }
-function processFragment(vnode: any, container: any) {
-  mountChild(vnode, container);
+function processFragment(vnode: any, container: any, parentComponent) {
+  mountChild(vnode, container, parentComponent);
 }
 function processText(vnode: any, container: any) {
   //  只渲染文字
