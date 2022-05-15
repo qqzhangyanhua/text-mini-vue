@@ -10,20 +10,21 @@ export function createComponentInstance(vnode) {
     type: vnode.type,
     setupState: {},
     props: {},
-    slot:{},
+    slot: {},
     emit: () => {},
   };
-  component.emit = emit.bind(null, component) as any;  //拿到instance
+  component.emit = emit.bind(null, component) as any; //拿到instance
   return component;
 }
 export function setComponentInstance(instance) {
   // initProps
   // initSlots
-  initSlots(instance,instance.vnode.children);
+  initSlots(instance, instance.vnode.children);
   initProps(instance, instance.vnode.props);
   setupStatefulComponent(instance);
 }
 function setupStatefulComponent(instance) {
+  setCurrentInstance(instance);
   const Component = instance.type;
   instance.proxy = new Proxy({ _: instance }, publicInstanceProxyHandler);
   const { setup } = Component;
@@ -31,6 +32,7 @@ function setupStatefulComponent(instance) {
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit,
     }); //props在子组件不去改变
+    setCurrentInstance(null);
     handelSetupResult(setupResult, instance);
   }
 }
@@ -46,4 +48,12 @@ function finishComponentSetup(instance: any) {
   if (Component.render) {
     instance.render = Component.render;
   }
+}
+
+let currentInstance = null;
+export function getCurrentInstance() {
+  return currentInstance;
+}
+export function setCurrentInstance(instance: any) {
+  currentInstance = instance;
 }
