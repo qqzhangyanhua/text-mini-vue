@@ -14,11 +14,14 @@ export const Foo = {
             // emit('Add', 1, 2)
             // emit('add-foo', 3, 4)
             count.value++
+            id.value='new-foo'
         }
         const count=ref(11)
+        const id=ref('foo123')
         return {
             count,
-            emitAdd
+            emitAdd,
+            id
         }
     },
     render() {
@@ -27,7 +30,7 @@ export const Foo = {
         }, 'emitAdd')
         const foo = h('p', {}, '我是foo组件'+this.count.value)
         return h('div', {
-            id: 'foo'
+            id: this.id.value
         }, [btn, foo]);
     }
 }

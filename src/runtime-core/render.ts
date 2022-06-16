@@ -1,9 +1,10 @@
 import { effect } from "../reactivity/effect";
 import { isObject } from "../reactivity/shared/index";
+import { hostPatchProp } from "../runtime-dom";
 import { ShapeFlags } from "../shared/sharedFlags";
 import { createComponentInstance, setComponentInstance } from "./component";
 
-export function render( vnode, container) {
+export function render(vnode, container) {
   patch(null, vnode, container, null);
   console.log("render==", vnode, container);
 }
@@ -75,7 +76,24 @@ function processElement(n1, n2: any, container: any, parentComponent) {
   }
 }
 function patchElement(n1, n2, container, parentComponent) {
-  console.log("patchElement")
+  console.log("patchElement");
+  const oldProps = n1.props || {};
+  const newProps = n2.props || {};
+  const el = (n2.el = n1.el);
+  patchProp(el,oldProps, newProps);
+}
+function patchProp(el,oldProps, newProps) {
+  // 遍历新的props
+  for (const key in newProps) {
+    const prevProp = oldProps[key];
+    const nextProp = newProps[key];
+      console.log("111", prevProp, nextProp);
+
+    // 如果props不想等就准备更新
+    if (prevProp !== nextProp) {
+      hostPatchProp(el, key, prevProp, nextProp);
+    }
+  }
 }
 function mountElement(vnode: any, container: any, parentComponent) {
   const el = (vnode.el = document.createElement(vnode.type));
