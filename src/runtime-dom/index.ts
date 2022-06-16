@@ -2,7 +2,7 @@ import { createRender } from "../runtime-core/render";
 function createElement(type) {
   return document.createElement(type);
 }
-function patchProp(el, key, prevValue,nextValue) {
+function patchProp(el, key, prevValue, nextValue) {
   const isOn = (key) => /^on[A-Z]/.test(key);
   if (isOn(key)) {
     const event = key.slice(2).toLowerCase();
@@ -17,11 +17,15 @@ export function hostPatchProp(el, key, prevValue, nextValue) {
     const event = key.slice(2).toLowerCase();
     el.addEventListener(event, nextValue);
   } else {
-    el.setAttribute(key, nextValue);
+    if (nextValue === undefined || nextValue === null) {
+      el.removeAttribute(key, nextValue);
+    } else {
+      el.setAttribute(key, nextValue);
+    }
   }
 }
 function insert(el, parent) {
-    parent.appendChild(el);
+  parent.appendChild(el);
 }
 
 const renderer = createRender({

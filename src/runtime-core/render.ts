@@ -94,6 +94,13 @@ function patchProp(el,oldProps, newProps) {
       hostPatchProp(el, key, prevProp, nextProp);
     }
   }
+  for (const key in oldProps) {
+    // 如果不在新的props就需要删除当前熟悉
+    if(!(key in newProps)){
+      hostPatchProp(el, key, oldProps[key], null);
+
+    }
+  }
 }
 function mountElement(vnode: any, container: any, parentComponent) {
   const el = (vnode.el = document.createElement(vnode.type));

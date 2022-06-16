@@ -14,7 +14,8 @@ export const Foo = {
             // emit('Add', 1, 2)
             // emit('add-foo', 3, 4)
             count.value++
-            id.value='new-foo'
+            // id.value='new-foo'
+            id.value=undefined;
         }
         const count=ref(11)
         const id=ref('foo123')
