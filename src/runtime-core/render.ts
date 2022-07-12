@@ -80,7 +80,26 @@ function patchElement(n1, n2, container, parentComponent) {
   const oldProps = n1.props || {};
   const newProps = n2.props || {};
   const el = (n2.el = n1.el);
+  patchChildren(n1,n2)
   patchProp(el,oldProps, newProps);
+}
+function patchChildren(n1, n2) {
+  const {shapeFlag} = n2.shapeFlag;
+  const {prevShapeFlag} = n1.shapeFlag;
+  if(shapeFlag & ShapeFlags.TEXT_CHILDREN){
+     if(prevShapeFlag & ShapeFlags.ARROW_CHILDREN){
+      //  把老的清空
+      unMountChildren(n1.children)
+     }
+  }
+
+
+}
+function unMountChildren(children){
+    for(let i =0;i< children.length;i++){
+      const el=children[i].el;
+      // hostRemove(el);
+    }
 }
 function patchProp(el,oldProps, newProps) {
   // 遍历新的props
