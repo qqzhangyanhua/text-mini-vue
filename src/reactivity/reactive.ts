@@ -1,36 +1,18 @@
-import {
-  mutableHandlers,
-  readonlyHandlers,
-  shallowReadonlyHandlers,
-} from "./bseHandlers";
-import { isObject } from "./shared/index";
-export const enum ReactiveFlags {
-  IS_REACTIVE = "__v_isReactive__",
-  IS_READ_ONLY = "__v_isReadonly__",
-}
 
-export function reactive(raw) {
-  return new Proxy(raw, mutableHandlers);
-}
+import { track, trigger } from "./effect";
 
-export function readonly(raw) {
-  return new Proxy(raw, readonlyHandlers);
-}
-export function isReactive(value) {
-  return !!value[ReactiveFlags.IS_REACTIVE];
-}
-export function isReadOnly(value) {
-  return !!value[ReactiveFlags.IS_READ_ONLY];
-}
-
-export function shallowReadonly(raw) {
-  if (!isObject(raw)) {
-    console.warn(`target ${raw} 必须是一个对象`);
-    return raw;
-  }
-  return new Proxy(raw, shallowReadonlyHandlers);
-}
-
-export function isProxy(raw: any): boolean {
-  return isReadOnly(raw) || isReactive(raw);
+export const reactive=(raw)=>{
+    return new Proxy(raw,{
+        get(target,key){
+            const res = Reflect.get(target,key);
+            track(target,key)
+            // 依賴收集
+            return res
+        },
+        set(target,key,value){
+            const res = Reflect.set(target,key,value);
+            trigger(target,key)
+            return res
+        }
+    })
 }
