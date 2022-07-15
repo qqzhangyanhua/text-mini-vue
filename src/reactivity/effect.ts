@@ -2,6 +2,7 @@
 let activeEffect
 class ReactiveEffect{
     public _fn:any
+    public deps = []
     constructor(fn:Function,public scheduler?) {
         this._fn=fn
     }
@@ -9,11 +10,21 @@ class ReactiveEffect{
         activeEffect = this;
        return this._fn()
     }
+    stop(){
+            this.deps.forEach((dep:any)=>{
+                dep.delete(this)
+            })
+    }
 }
 export function effect(fn,options:any={}){
    const _effect = new ReactiveEffect(fn, options.scheduler);
    _effect.run();
-   return _effect.run.bind(_effect);
+   const runner:any = _effect.run.bind(_effect);
+   runner.effect = _effect
+   return runner
+}
+export function stop(runner) {
+    runner.effect.stop();
 }
 const targetMap = new Map();
 export function track(target,key){
@@ -22,15 +33,15 @@ export function track(target,key){
         depsMap = new Map();
         targetMap.set(target,depsMap);
     }
-    console.log('depsMap===',depsMap)
     let dep = depsMap.get(key);
-    console.log("dep===", dep);
     
     if(!dep){
         dep = new Set();
         depsMap.set(key,dep)
     }
     dep.add(activeEffect);
+    console.log("activeEffect", activeEffect.deps);
+    // activeEffect.deps.push(dep);
     // const dep =new Set()
 }
 export function trigger(target,key){
